@@ -41,10 +41,7 @@ def generate_even_data(max_int, batch_size):
 
     return labels, data
 
-def train(max_int=128, batch_size=16, training_steps=500):
-    input_length = int(math.log(max_int, 2))
-    generator = Generator(input_length).to(device)
-    discriminator = Discriminator(input_length).to(device)
+def train(generator, discriminator, max_int=128, batch_size=16, training_steps=500):
 
     loss = nn.BCELoss()
 
@@ -87,6 +84,12 @@ def train(max_int=128, batch_size=16, training_steps=500):
 
 if __name__ == '__main__':
     epochs = 5
+    max_int = 128
+    input_length = int(math.log(max_int, 2))
+
+    generator = Generator(input_length).to(device)
+    discriminator = Discriminator(input_length).to(device)
+
     for i in range(epochs):
-        train()
+        train(generator, discriminator)
 

@@ -2,17 +2,18 @@ import time
 import numpy as np
 import math
 from itertools import product, combinations
-length = 8 
-width = 8
-P_r = [3]
-netR = 3
-l_r = netR / 2
-w_r = netR * width / length / 2
-P = 5
-r = [netR, netR, netR, netR, netR]
-recL = math.ceil(length * 2 / netR)
-# recW = math.ceil(width / netR)
-recW = recL
+length = 12 
+width = 6
+netRatio = 3
+# l_r = sprR / netRatio
+# w_r = sprR * width / length / netRatio
+netR = 1
+sprR = 4
+rr = math.ceil(sprR / netR)
+P = 4
+r = [rr, rr, rr, rr]
+recL = math.ceil(length / netR)
+recW = math.ceil(width / netR)
 x_min = 0
 y_min = 0
 
@@ -20,8 +21,11 @@ def dis(x_1, y_1, x_2, y_2):
     return math.sqrt((x_1 - x_2)**2 + (y_1 - y_2)**2)
 
 def rec(x, y):
-    # return math.floor((x - x_min) * 2 / netR), math.floor((y - y_min) * length * 2 / netR / width) 
+    # return math.floor((x - x_min) * netRatio / sprR), math.floor((y - y_min) * length * netRatio / sprR / width) 
     return x - x_min, y - y_min
+
+def recFromPos(x, y):
+    return math.floor((x - x_min) / netR), math.floor((y - y_min) / netR) 
 
 def sprinkler_range(x, y, r):
     P_x_min = x[0] - r[0]
@@ -38,11 +42,12 @@ def sprinkler_range(x, y, r):
 def N_(x, y, r, netW, netL): # N[y][x]
     N = np.zeros((netW + 1, netL + 1), dtype=int)
     for i in range(P):
-        for ii in range(rec(x[i] - r[i]), x[i] + r[i]):
-            for jj in range(y[i] - r[i], y[i] + r[i]):
-                ii_, jj_ = rec(ii, jj)
-                xi_, yi_ = rec(x[i], y[i])
-                if (dis(ii_, jj_, xi_, yi_) <= r[i]): N[jj_][ii_] += 1
+        iirb, jjrb = rec(x[i] - r[i], y[i] - r[i])
+        iiru, jjru = rec(x[i] + r[i], y[i] + r[i])
+        xi_, yi_ = rec(x[i], y[i])
+        for ii in range(iirb, iiru):
+            for jj in range(jjrb, jjru):
+                if (dis(ii, jj, xi_, yi_) <= rr): N[jj][ii] += 1
     return N.tolist()
 
 def enumerPos():
@@ -88,6 +93,8 @@ def coverRate(N):
     for i in range(recL):
         for j in range(recW):
             ii, jj = rec(i, j)
+            # print(ii, jj)
+            # print("\n")
             if N[jj][ii] >= 1:
                 sumCover += 1
     return sumCover
@@ -95,24 +102,20 @@ def coverRate(N):
 if __name__ == '__main__':
     pos = enumerPos()
     w1 = 0.5; w2 = 0.5
-    minLoss = 9999999
+    minLoss = 999999999999
     for p in pos:
         x, y = map(list, zip(*p))
-        print(list(zip(x, y)))
         P_x_min, P_x_max, P_y_min, P_y_max = sprinkler_range(x, y, r)
         x_min = min(P_x_min, 0)
         y_min = min(P_y_min, 0)
         x_max = max(P_x_max, recL)
         y_max = max(P_y_max, recW)
 
-        netL = math.ceil((x_max - x_min) * 2 / netR)
-        netW = math.ceil((y_max - y_min) * 2 * length / netR / width)
+        netL = x_max - x_min
+        netW = y_max - y_min
         N = N_(x, y, r, netW, netL)
-        print(N)
-        print("\n")
-        if (coverRate(N) > recL * recW):
+        if (coverRate(N) >= recL * recW):
             loss = w1 * wasteArea(x, y, N) + w2 * minM(N)
             if (loss < minLoss):
                 minLoss = loss
-                print(zip(x, y))
-        break
+                print(list(zip(x, y)))

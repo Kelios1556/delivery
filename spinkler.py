@@ -34,16 +34,19 @@ def N(x, y, r):
         for ii in range(x[i] - r[i], x[i] + r[i]):
             for jj in range(y[i] - r[i], y[i] + r[i]):
                 if (dis(ii, jj, x[i], y[i]) < r[i]): N[jj][ii] += 1
+    return N.tolist()
 
 def enumerPos():
     pos = list(product(range(netL), range(netW)))
     return list(combinations(pos, 5))
 
+def 
+
 if __name__ == '__main__':
     pos = enumerPos()
     for p in pos:
-        print(p)
         x, y = map(list, zip(*p))
+        
         
 
 

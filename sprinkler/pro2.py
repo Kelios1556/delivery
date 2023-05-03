@@ -7,7 +7,7 @@ eta = 0.9
 sprR = 4
 S = math.pi * (sprR**2)
 Q = 0.1
-
+h = 0.05
 E = 0.1
 P = 4
 cor = [(3, 2), (3, 3), (8, 2), (8, 3)]
@@ -30,8 +30,9 @@ def quota():
         m = (2 * m_a + m_b) / 2
     else:
         m = (a + b) / 2
-
-    return m * S / eta  / Q
+    t = m * S / eta / Q
+    T = ((t * Q / S / h) - E * t) / E
+    return t, T
 
 def rec(i, j):
     return i - x_min, j - x_min
@@ -50,6 +51,7 @@ def wetRateDetectArea():
                 if (dis(ii, jj, x[i], y[i]) <= sprNetR): 
                     if (flag1 == False and N[jj_][ii_] == 1): 
                         measureArea[i][0] = [ii_, jj_]
+                        if (flag2 == False): measureArea[i][1] = [ii_, jj_]
                         flag1 = True
                     if (flag2 == False and N[jj_][ii_] == 2):
                         measureArea[i][1] = [ii_, jj_]

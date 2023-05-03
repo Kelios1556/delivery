@@ -6,7 +6,7 @@ length = 12
 width = 6
 netR = 1
 sprR = 4
-P = 3
+P = 4
 
 sprNetR = sprR / netR
 recL = math.ceil(length / netR)
@@ -50,7 +50,7 @@ def enumerPos():
     pos = list(product(range(recL), range(recW)))
     return list(combinations(pos, P))
 
-def wasteArea(x, y, N, P_x_min, P_x_max, P_y_min, P_y_max):
+def wasteArea(N, P_x_min, P_x_max, P_y_min, P_y_max):
     result = 0
     for i in range(P_x_min, 0):
         for j in range(P_y_min, P_y_max):
@@ -118,23 +118,25 @@ def sprPos(w1, w2, w3):
         netW = y_max - y_min
         N = N_(x, y, netW, netL)
 
-        loss = w1 * wasteArea(x, y, N, P_x_min, P_x_max, P_y_min, P_y_max) \
+        loss = w1 * wasteArea(N, P_x_min, P_x_max, P_y_min, P_y_max) \
                 + w2 * repeatRate(N) \
                 + w3 * (recL * recW - coverRate(N))
 
         if (loss < minLoss):
             minLoss = loss
-            coordinate = list(zip(x, y))
-    return minLoss, coordinate
+            cordinate = list(zip(x, y))
+    return minLoss, cordinate
 
 if __name__ == '__main__':
     pos = enumerPos()
     w1 = 0.3; w2 = 0.3; w3 = 0.4
+
     for w1 in np.arange(0.3, 0.55, 0.05):
         for w2 in np.arange(0.3, 0.05, -0.05):
-            w3 = 1 - round(w1, 1) - round(w2, 1)
-            minLoss, coor = sprPos(round(w1, 1), round(w2, 1), round(w3, 1))
-            print("w1, w2, w3 = ", w1, w2, w3)
-            print(minLoss, coor)
+            w3 = 1 - round(w1, 2) - round(w2, 2)
+            minLoss, cor = sprPos(round(w1, 2), round(w2, 2), round(w3, 2))
+            print("w1, w2, w3 = ", round(w1, 2), round(w2, 2), round(w3, 2))
+            print(minLoss, cor)
             print("\n")
+
 

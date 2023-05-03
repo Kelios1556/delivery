@@ -1,14 +1,14 @@
 import numpy as np
 import math
 from itertools import product, combinations
+
 length = 12 
 width = 6
-# l_r = sprR / netRatio
-# w_r = sprR * width / length / netRatio
 netR = 1
 sprR = 4
-sprNetR = sprR / netR
 P = 3
+
+sprNetR = sprR / netR
 recL = math.ceil(length / netR)
 recW = math.ceil(width / netR)
 x_min = 0; y_min = 0
@@ -18,7 +18,6 @@ def dis(x_1, y_1, x_2, y_2):
     return math.sqrt((x_1 - x_2)**2 + (y_1 - y_2)**2)
 
 def rec(x, y):
-    # return math.floor((x - x_min) * netRatio / sprR), math.floor((y - y_min) * length * netRatio / sprR / width) 
     return x - x_min, y - y_min
 
 def recFromPos(x, y):
@@ -133,8 +132,9 @@ if __name__ == '__main__':
     w1 = 0.3; w2 = 0.3; w3 = 0.4
     for w1 in np.arange(0.3, 0.55, 0.05):
         for w2 in np.arange(0.3, 0.05, -0.05):
-            w3 = 1 - w1 - w2
-            minLoss, coor = sprPos(w1, w2, w3)
+            w3 = 1 - round(w1, 1) - round(w2, 1)
+            minLoss, coor = sprPos(round(w1, 1), round(w2, 1), round(w3, 1))
+            print("w1, w2, w3 = ", w1, w2, w3)
             print(minLoss, coor)
             print("\n")
 
